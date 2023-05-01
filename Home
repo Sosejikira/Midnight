@@ -72,8 +72,8 @@ local function SaveConfiguration()
 	if not CEnabled then return end
 	local Data = {}
 	for _, Object in pairs(Z8m2fOpQ.Flags) do
-		if Object.Color then
-			Data[_] = PackColor(Object.Color)
+		if Object.Type == "ColorPicker" then
+			Data[_] = PackColor(Object.Current)
 		else
 			Data[_] = Object.Current
 		end
@@ -806,7 +806,8 @@ function Z8m2fOpQ:Window(Settings)
 				return Arguments
 			end
 			function Section:ColorPicker(Arguments)
-				if Arguments.Color == nil then Arguments.Color = Color3.new(1, 1, 1) end
+				if Arguments.Current == nil then Arguments.Current = Color3.new(1, 1, 1) end
+				Arguments.Type = "ColorPicker"
 				local PickerFrame = Instance.new("Frame", Container)
 				PickerFrame.Name = Arguments.Name or "None"
 				PickerFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
@@ -1154,7 +1155,7 @@ function Z8m2fOpQ:Window(Settings)
 				SliderButton.MouseButton1Down:Connect(function()
 					if Opened then SliderDragging = true end
 				end)
-				local H, S, V = Arguments.Color:ToHSV()
+				local H, S, V = Arguments.Current:ToHSV()
 				local Color = Color3.fromHSV(H, S, V)
 				local Hexadecimal = string.format("#%02X%02X%02X", Color.R *0xFF, Color.G *0xFF, Color.B *0xFF)
 				HexInput.Current.Text = Hexadecimal
@@ -1184,7 +1185,7 @@ function Z8m2fOpQ:Window(Settings)
 							H, S, V = rgbColor:ToHSV()
 							Hexadecimal = HexInput.Current.Text
 							SetDisplay()
-							Arguments.Color = rgbColor
+							Arguments.Current = rgbColor
 						end) 
 					then 
 						HexInput.Current.Text = Hexadecimal 
@@ -1192,7 +1193,7 @@ function Z8m2fOpQ:Window(Settings)
 					pcall(function()
 						Arguments.Callback(Color3.fromHSV(H, S, V))
 					end)
-					Arguments.Color = Color3.fromRGB(math.floor((H *255) +0.5), math.floor((S *255) +0.5), math.floor((V *255) +0.5))
+					Arguments.Current = Color3.fromRGB(math.floor((H *255) +0.5), math.floor((S *255) +0.5), math.floor((V *255) +0.5))
 					SaveConfiguration()
 				end)
 				local function Boxes(Object, ToChange)
@@ -1217,7 +1218,7 @@ function Z8m2fOpQ:Window(Settings)
 					else 
 						Object.Text = tostring(save)
 					end
-					Arguments.Color = Color3.fromRGB(math.floor((H *255) +0.5), math.floor((S *255) +0.5), math.floor((V *255) +0.5))
+					Arguments.Current = Color3.fromRGB(math.floor((H *255) +0.5), math.floor((S *255) +0.5), math.floor((V *255) +0.5))
 					SaveConfiguration()
 				end
 				Redness.Current.FocusLost:connect(function()
@@ -1250,7 +1251,7 @@ function Z8m2fOpQ:Window(Settings)
 						Blueness.Current.Text = tostring(B)
 						HexInput.Current.Text = string.format("#%02X%02X%02X", color.R *0xFF, color.G *0xFF, color.B *0xFF)
 						pcall(function() Arguments.Callback(Color3.fromHSV(H, S, V)) end)
-						Arguments.Color = Color3.fromRGB(R, G, B)
+						Arguments.Current = Color3.fromRGB(R, G, B)
 						SaveConfiguration()
 					end
 					if SliderDragging then 
@@ -1268,13 +1269,13 @@ function Z8m2fOpQ:Window(Settings)
 						Blueness.Current.Text = tostring(B)
 						HexInput.Current.Text = string.format("#%02X%02X%02X", color.R *0xFF, color.G *0xFF, color.B *0xFF)
 						pcall(function() Arguments.Callback(Color3.fromHSV(H, S, V)) end)
-						Arguments.Color = Color3.fromRGB(R, G, B)
+						Arguments.Current = Color3.fromRGB(R, G, B)
 						SaveConfiguration()
 					end
 				end)
 				function Arguments:Set(Parameters)
-					Arguments.Color = Parameters
-					H, S, V = Arguments.Color:ToHSV()
+					Arguments.Current = Parameters
+					H, S, V = Arguments.Current:ToHSV()
 					Color = Color3.fromHSV(H, S, V)
 					SetDisplay()
 				end
