@@ -42,7 +42,7 @@ local Z8m2fOpQ = {
 	Folder = {Name = "Midnight/Configs", Extension = ".mdnt"},
 }
 local CFileName, CEnabled = nil, false
-for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
+for _, Object in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetChildren()) do
 	if Object:IsA("ScreenGui") and Object.Name == "Midnight" and Object.DisplayOrder == 8192 then
 		Object.Enabled = false
 		Object:Destroy()
@@ -766,7 +766,10 @@ function Z8m2fOpQ:Window(Settings)
 								table.remove(Arguments.Current, table.find(Arguments.Current, Option))
 								TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor}):Play()
 							else
-								if #Arguments.Current < Arguments.Maximum then
+								if #Arguments.Current < Arguments.Maximum or (Arguments.Maximum == 1 and #Arguments.Current == 1) then
+									if Arguments.Maximum == 1 and #Arguments.Current == 1 then
+										table.remove(Arguments.Current, Arguments.Current[1])
+									end
 									table.insert(Arguments.Current, Option)
 									TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor}):Play()
 								else
@@ -781,7 +784,7 @@ function Z8m2fOpQ:Window(Settings)
 								TextLabel.Text = "Error"
 								print("[Z8m2fOpQ]: "..tostring(Response))
 								wait(0.5)
-								TextLabel.Text = Arguments.Name
+								TextLabel.Text = Option
 								TweenService:Create(DropdownFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
 							end
 							SaveConfiguration()
@@ -1621,7 +1624,7 @@ function Z8m2fOpQ:LoadConfiguration()
 		pcall(function()
 			if isfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension) then
 				LoadConfiguration(readfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension))
---Z8m2fOpQ:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
+				--Z8m2fOpQ:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
 			end
 		end)
 	end
