@@ -1621,11 +1621,10 @@ function Z8m2fOpQ:LoadConfiguration()
 		pcall(function()
 			if isfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension) then
 				LoadConfiguration(readfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension))
-				warn("H")
 --Z8m2fOpQ:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
 			end
 		end)
 	end
 end
-task.delay(4, Z8m2fOpQ.LoadConfiguration, Z8m2fOpQ)
+task.delay(0.4, Z8m2fOpQ.LoadConfiguration, Z8m2fOpQ)
 return Z8m2fOpQ
