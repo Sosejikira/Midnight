@@ -42,7 +42,6 @@ local Z8m2fOpQ = {
 	Folder = {Name = "Midnight/Configs", Extension = ".mdnt"},
 }
 local CFileName, CEnabled = nil, false
-
 for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
 	if Object:IsA("ScreenGui") and Object.Name == "Midnight" and Object.DisplayOrder == 8192 then
 		Object.Enabled = false
@@ -1617,5 +1616,15 @@ function Z8m2fOpQ:Window(Settings)
 	end
 	return Window
 end
-
+function Z8m2fOpQ:LoadConfiguration()
+	if CEnabled then
+		pcall(function()
+			if isfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension) then
+				LoadConfiguration(readfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension))
+--Z8m2fOpQ:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
+			end
+		end)
+	end
+end
+task.delay(4, Z8m2fOpQ.LoadConfiguration, Z8m2fOpQ)
 return Z8m2fOpQ
