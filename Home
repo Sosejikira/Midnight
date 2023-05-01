@@ -48,7 +48,7 @@ for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
 		Object:Destroy()
 	end
 end
---
+
 local function UnpackColor(Color) return Color3.fromRGB(Color.R, Color.G, Color.B) end
 local function LoadConfiguration(Configuration)
 	local Data = game:GetService("HttpService"):JSONDecode(Configuration)
@@ -768,7 +768,7 @@ function Z8m2fOpQ:Window(Settings)
 							else
 								if #Arguments.Current < Arguments.Maximum or (Arguments.Maximum == 1 and #Arguments.Current == 1) then
 									if Arguments.Maximum == 1 and #Arguments.Current == 1 then
-										table.remove(Arguments.Current, Arguments.Current[1])
+										table.remove(Arguments.Current, 1)
 									end
 									table.insert(Arguments.Current, Option)
 									TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor}):Play()
