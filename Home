@@ -72,7 +72,7 @@ local function SaveConfiguration()
 	if not CEnabled then return end
 	local Data = {}
 	for _, Object in pairs(Z8m2fOpQ.Flags) do
-		if Object.Type == "ColorPicker" then
+		if Object.Color then
 			Data[_] = PackColor(Object.Color)
 		else
 			Data[_] = Object.Current
