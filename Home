@@ -66,7 +66,7 @@ local function SaveConfiguration()
 	local Data = {}
 	for _, Object in pairs(Z8m2fOpQ.Flags) do
 		if Object.Type == "ColorPicker" then
-			Data[_] = PackColor(Object.Current)
+			Data[_] = PackColor(Object.Color)
 		else
 			Data[_] = Object.Current
 		end
