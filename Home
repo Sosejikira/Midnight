@@ -42,7 +42,7 @@ local Z8m2fOpQ = {
 	Folder = {Name = "Midnight/Configs", Extension = ".mdnt"},
 }
 local CFileName, CEnabled = nil, false
-for _, Object in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetChildren()) do
+for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
 	if Object:IsA("ScreenGui") and Object.Name == "Midnight" and Object.DisplayOrder == 8192 then
 		Object.Enabled = false
 		Object:Destroy()
