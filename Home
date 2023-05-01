@@ -768,6 +768,7 @@ function Z8m2fOpQ:Window(Settings)
 							else
 								if #Arguments.Current < Arguments.Maximum or (Arguments.Maximum == 1 and #Arguments.Current == 1) then
 									if Arguments.Maximum == 1 and #Arguments.Current == 1 then
+										TweenService:Create(Container:FindFirstChild(Arguments.Current[1]), TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor}):Play()
 										table.remove(Arguments.Current, 1)
 									end
 									table.insert(Arguments.Current, Option)
