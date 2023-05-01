@@ -66,7 +66,7 @@ local function SaveConfiguration()
 	local Data = {}
 	for _, Object in pairs(Z8m2fOpQ.Flags) do
 		if Object.Type == "ColorPicker" then
-			Data[_] = PackColor(Object.Color)
+			Data[_] = PackColor(Object.Current)
 		else
 			Data[_] = Object.Current
 		end
@@ -149,16 +149,15 @@ function Z8m2fOpQ:Window(Settings)
 	HeaderFrame.Size = UDim2.new(1, 0, 0, 40)
 	HeaderFrame.ZIndex = 2
 	pcall(function()
-		if not Settings.ConfigurationSaving.FileName then
-			Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
+		if not Settings.ConfigurationSaving.Name then
+			Settings.ConfigurationSaving.Name = tostring(game.PlaceId)
 		end
-		if not isfolder("Midnight".."/".."Folders") then
+		if not isfolder("Midnight/Folder") then
 		end
 		if Settings.ConfigurationSaving.Enabled == nil then
 			Settings.ConfigurationSaving.Enabled = false
 		end
-		CFileName = Settings.ConfigurationSaving.FileName
-		Z8m2fOpQ.Folder.Name = Settings.ConfigurationSaving.FolderName or Z8m2fOpQ.Folder.Name
+		CFileName = Settings.ConfigurationSaving.Name
 		CEnabled = Settings.ConfigurationSaving.Enabled
 
 		if Settings.ConfigurationSaving.Enabled then
@@ -596,6 +595,11 @@ function Z8m2fOpQ:Window(Settings)
 						SaveConfiguration()
 					end
 				end
+				if Settings.ConfigurationSaving then
+					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
+						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+					end
+				end
 				return Arguments
 			end
 			function Section:Dropdown(Arguments)
@@ -785,6 +789,11 @@ function Z8m2fOpQ:Window(Settings)
 				function Arguments:Set(Parameters)
 					Arguments.Current = Parameters
 					Refresh()
+				end
+				if Settings.ConfigurationSaving then
+					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
+						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+					end
 				end
 				return Arguments
 			end
@@ -1261,6 +1270,11 @@ function Z8m2fOpQ:Window(Settings)
 					Color = Color3.fromHSV(H, S, V)
 					SetDisplay()
 				end
+				if Settings.ConfigurationSaving then
+					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
+						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+					end
+				end
 				return Arguments
 			end
 			function Section:Slider(Arguments)
@@ -1432,6 +1446,11 @@ function Z8m2fOpQ:Window(Settings)
 					Arguments.Current = Parameters
 					SaveConfiguration()
 				end
+				if Settings.ConfigurationSaving then
+					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
+						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+					end
+				end
 				return Arguments
 			end
 			function Section:Input(Arguments)
@@ -1516,7 +1535,6 @@ function Z8m2fOpQ:Window(Settings)
 					if Arguments.ClearOnFocusLost then
 						TextBox.Text = ""
 					end
-					SaveConfiguration()
 				end)
 				local ImageButton = Instance.new("ImageButton", InputFrame)
 				ImageButton.Name = "Surface"
