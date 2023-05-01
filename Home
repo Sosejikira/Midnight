@@ -1366,7 +1366,7 @@ function Z8m2fOpQ:Window(Settings)
 							end
 							TweenService:Create(Indicator, TweenInfo.new(0.4), {Size = UDim2.new(0, Current -Button.AbsolutePosition.X, 1, 0)}):Play()
 							local NewValue = Arguments.Range[1] +(Location -Button.AbsolutePosition.X) /Button.AbsoluteSize.X *(Arguments.Range[2] -Arguments.Range[1])
-							NewValue = math.floor(NewValue /Arguments.Increment + 0.5) *(Arguments.Increment *10000000) /10000000
+							NewValue = math.floor(NewValue /Arguments.Increment +0.5) *(Arguments.Increment *10000000) /10000000
 							Button:FindFirstChildOfClass("TextLabel").Text = tostring(NewValue)
 							if Arguments.Current ~= NewValue then
 								local Success, Response = pcall(function()
