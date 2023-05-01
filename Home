@@ -1368,7 +1368,7 @@ function Z8m2fOpQ:Window(Settings)
 							local NewValue = Arguments.Range[1] +(Location -Button.AbsolutePosition.X) /Button.AbsoluteSize.X *(Arguments.Range[2] -Arguments.Range[1])
 							NewValue = math.floor(NewValue /Arguments.Increment + 0.5) *(Arguments.Increment *10000000) /10000000
 							Button:FindFirstChildOfClass("TextLabel").Text = tostring(NewValue)
-							if Arguments.CurrentValue ~= NewValue then
+							if Arguments.Current ~= NewValue then
 								local Success, Response = pcall(function()
 									Arguments.Callback(NewValue)
 								end)
@@ -1380,7 +1380,7 @@ function Z8m2fOpQ:Window(Settings)
 									TextLabel.Text = Arguments.Name
 									TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
 								end
-								Arguments.CurrentValue = NewValue
+								Arguments.Current = NewValue
 								SaveConfiguration()
 							end
 						else
