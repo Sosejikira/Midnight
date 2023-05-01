@@ -43,6 +43,13 @@ local Z8m2fOpQ = {
 }
 local CFileName, CEnabled = nil, false
 
+for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
+	if Object:IsA("ScreenGui") and Object.Name == "Midnight" and Object.DisplayOrder == 8192 then
+		Object.Enabled = false
+		Object:Destroy()
+	end
+end
+
 local function UnpackColor(Color) return Color3.fromRGB(Color.R, Color.G, Color.B) end
 local function LoadConfiguration(Configuration)
 	local Data = game:GetService("HttpService"):JSONDecode(Configuration)
@@ -109,6 +116,7 @@ local function AddDraggingFunctionality(Frame, Parent)
 	end)
 end
 local Z8m2fOpQGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+Z8m2fOpQGui.Name = "Midnight"
 Z8m2fOpQGui.DisplayOrder = 8192
 Z8m2fOpQGui.ResetOnSpawn = false
 Z8m2fOpQGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
@@ -321,7 +329,7 @@ function Z8m2fOpQ:Window(Settings)
 			TweenService:Create(TextLabel, TweenInfo.new(.4), {TextTransparency = 0}):Play()
 			TweenService:Create(ImageLabel, TweenInfo.new(.4), {ImageTransparency = 0}):Play()
 		end
-		
+
 		local TabFrame = Instance.new("ScrollingFrame", Container)
 		TabFrame.Name = TabOption.Name or "None"
 		TabFrame.BackgroundColor3 = Color3.new()
@@ -827,7 +835,7 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Center
-				
+
 				local ColorPalette = Instance.new("Frame", PickerFrame)
 				ColorPalette.Name = "ColorPalette"
 				ColorPalette.AnchorPoint = Vector2.new(1, 0)
@@ -884,7 +892,7 @@ function Z8m2fOpQ:Window(Settings)
 				GradiantButton.Image = "rbxassetid://3259050989"
 				GradiantButton.ImageColor3 = Color3.new(1, 1, 1)
 				GradiantButton.ImageTransparency = 1
-				
+
 				local ColorInput = Instance.new("Frame", PickerFrame)
 				ColorInput.Name = "ColorInput"
 				ColorInput.BackgroundColor3 = Color3.new()
@@ -997,7 +1005,7 @@ function Z8m2fOpQ:Window(Settings)
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
 				Current.TextYAlignment = Enum.TextYAlignment.Center
-				
+
 				local HexInput = Instance.new("Frame", PickerFrame)
 				HexInput.Name = "Blueness"
 				HexInput.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
@@ -1031,7 +1039,7 @@ function Z8m2fOpQ:Window(Settings)
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
 				Current.TextYAlignment = Enum.TextYAlignment.Center
-				
+
 				local ColorSlider = Instance.new("ImageButton", PickerFrame)
 				ColorSlider.Name = "ColorSlider"
 				ColorSlider.AnchorPoint = Vector2.new(1, 0)
@@ -1084,7 +1092,7 @@ function Z8m2fOpQ:Window(Settings)
 				SliderButton.Image = "rbxassetid://3259050989"
 				SliderButton.ImageColor3 = Color3.new(1, 0, 0)
 				SliderButton.ImageTransparency = 0
-				
+
 				local ImageButton = Instance.new("ImageButton", PickerFrame)
 				ImageButton.Name = "Surface"
 				ImageButton.AutoButtonColor = false
@@ -1124,7 +1132,7 @@ function Z8m2fOpQ:Window(Settings)
 						TweenService:Create(GradiantButton, TweenInfo.new(0.4), {ImageTransparency = 1}):Play()
 					end
 				end)
-				
+
 				local PaletteDragging = false
 				local SliderDragging = false
 				local Mouse = game:GetService("Players").LocalPlayer:GetMouse()
