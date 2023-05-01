@@ -48,7 +48,7 @@ for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
 		Object:Destroy()
 	end
 end
-
+--
 local function UnpackColor(Color) return Color3.fromRGB(Color.R, Color.G, Color.B) end
 local function LoadConfiguration(Configuration)
 	local Data = game:GetService("HttpService"):JSONDecode(Configuration)
