@@ -1,5 +1,5 @@
 --[[Sosejikira#4993]]--
-local Z8m2fOpQ = {
+local Midnight = {
 	Flags = {},
 	Theme = {"Charcoal", {
 		["Charcoal"] = {
@@ -40,9 +40,10 @@ local Z8m2fOpQ = {
 		},
 	}},
 	Folder = {Name = "Midnight/Configs", Extension = ".mdnt"},
+	Hidden = false, Shrink = false,
 }
 local CFileName, CEnabled = nil, false
-for _, Object in pairs(game:GetService("CoreGui"):GetChildren()) do
+for _, Object in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetChildren()) do
 	if Object:IsA("ScreenGui") and Object.Name == "Midnight" and Object.DisplayOrder == 8192 then
 		Object.Enabled = false
 		Object:Destroy()
@@ -53,13 +54,13 @@ local function UnpackColor(Color) return Color3.fromRGB(Color.R, Color.G, Color.
 local function LoadConfiguration(Configuration)
 	local Data = game:GetService("HttpService"):JSONDecode(Configuration)
 	for FlagName, FlagValue in next, Data do
-		if Z8m2fOpQ.Flags[FlagName] then
+		if Midnight.Flags[FlagName] then
 			spawn(function() 
-				if Z8m2fOpQ.Flags[FlagName].Type == "ColorPicker" then
-					Z8m2fOpQ.Flags[FlagName]:Set(UnpackColor(FlagValue))
+				if Midnight.Flags[FlagName].Type == "ColorPicker" then
+					Midnight.Flags[FlagName]:Set(UnpackColor(FlagValue))
 				else
-					if Z8m2fOpQ.Flags[FlagName].Current then
-						Z8m2fOpQ.Flags[FlagName]:Set(FlagValue)
+					if Midnight.Flags[FlagName].Current then
+						Midnight.Flags[FlagName]:Set(FlagValue)
 					end
 				end    
 			end)
@@ -70,7 +71,7 @@ local function PackColor(Color) return {R = Color.R *255, G = Color.G *255, B = 
 local function SaveConfiguration()
 	if not CEnabled then return end
 	local Data = {}
-	for _, Object in pairs(Z8m2fOpQ.Flags) do
+	for _, Object in pairs(Midnight.Flags) do
 		if Object.Type == "ColorPicker" then
 			Data[_] = PackColor(Object.Current)
 		else
@@ -78,7 +79,7 @@ local function SaveConfiguration()
 		end
 	end	
 	pcall(function()
-		writefile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension, tostring(game:GetService("HttpService"):JSONEncode(Data)))
+		writefile(Midnight.Folder.Name.."/"..CFileName..Midnight.Folder.Extension, tostring(game:GetService("HttpService"):JSONEncode(Data)))
 	end)
 end
 
@@ -107,23 +108,23 @@ local function AddDraggingFunctionality(Frame, Parent)
 		game:GetService("UserInputService").InputChanged:Connect(function(Input)
 			if Input == DragInput and Dragging then
 				local Delta = Input.Position - MousePos
-				TweenService:Create(Parent, TweenInfo.new(.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				TweenService:Create(Parent, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
 					Position = UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
 				}):Play()
 			end
 		end)
 	end)
 end
-local Z8m2fOpQGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-Z8m2fOpQGui.Name = "Midnight"
-Z8m2fOpQGui.DisplayOrder = 8192
-Z8m2fOpQGui.ResetOnSpawn = false
-Z8m2fOpQGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-function Z8m2fOpQ:Window(Settings)
-	local WindowFrame = Instance.new("Frame", Z8m2fOpQGui)
+local MidnightGui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
+MidnightGui.Name = "Midnight"
+MidnightGui.DisplayOrder = 8192
+MidnightGui.ResetOnSpawn = false
+MidnightGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+function Midnight:Window(Settings)
+	local WindowFrame = Instance.new("Frame", MidnightGui)
 	WindowFrame.Name = "Window"
 	WindowFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	WindowFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].WindowColor
+	WindowFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].WindowColor
 	WindowFrame.BackgroundTransparency = 0
 	WindowFrame.BorderColor3 = Color3.new()
 	WindowFrame.BorderSizePixel = 0
@@ -149,12 +150,12 @@ function Z8m2fOpQ:Window(Settings)
 	ShadowImage.ImageTransparency = 0.4
 	local HeaderFrame = Instance.new("Frame", WindowFrame)
 	HeaderFrame.Name = "Header"
-	HeaderFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HeaderColor
+	HeaderFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderColor
 	HeaderFrame.BackgroundTransparency = 0
 	HeaderFrame.BorderColor3 = Color3.new()
 	HeaderFrame.BorderSizePixel = 0
 	HeaderFrame.Size = UDim2.new(1, 0, 0, 40)
-	HeaderFrame.ZIndex = 2
+	HeaderFrame.ZIndex = 8
 	pcall(function()
 		if not Settings.ConfigurationSaving.Name then
 			Settings.ConfigurationSaving.Name = tostring(game.PlaceId)
@@ -168,8 +169,8 @@ function Z8m2fOpQ:Window(Settings)
 		CEnabled = Settings.ConfigurationSaving.Enabled
 
 		if Settings.ConfigurationSaving.Enabled then
-			if not isfolder(Z8m2fOpQ.Folder.Name) then
-				makefolder(Z8m2fOpQ.Folder.Name)
+			if not isfolder(Midnight.Folder.Name) then
+				makefolder(Midnight.Folder.Name)
 			end	
 		end
 	end)
@@ -179,13 +180,13 @@ function Z8m2fOpQ:Window(Settings)
 	Corner.CornerRadius = UDim.new(0, 10)
 	local RepairFrame = Instance.new("Frame", HeaderFrame)
 	RepairFrame.Name = "Repair"
-	RepairFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HeaderColor
+	RepairFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderColor
 	RepairFrame.BackgroundTransparency = 0
 	RepairFrame.BorderColor3 = Color3.new()
 	RepairFrame.BorderSizePixel = 0
 	RepairFrame.Position = UDim2.new(0, 0, 1, -5)
 	RepairFrame.Size = UDim2.new(1, 0, 0, 5)
-	RepairFrame.ZIndex = 2
+	RepairFrame.ZIndex = 8
 	local TextLabel = Instance.new("TextLabel", HeaderFrame)
 	TextLabel.Name = "Name"
 	TextLabel.BackgroundColor3 = Color3.new()
@@ -193,40 +194,78 @@ function Z8m2fOpQ:Window(Settings)
 	TextLabel.BorderColor3 = Color3.new()
 	TextLabel.BorderSizePixel = 0
 	TextLabel.Position = UDim2.new(0, 10, 0, 10)
-	TextLabel.Size = UDim2.new(1, -50, 0, 20)
-	TextLabel.ZIndex = 4
-	TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
-	TextLabel.Text = Settings.Name or "Z8m2fOpQ"
-	TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HeaderTextColor
+	TextLabel.Size = UDim2.new(1, -80, 0, 20)
+	TextLabel.ZIndex = 10
+	TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+	TextLabel.Text = Settings.Name or "Midnight Window Example"
+	TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderTextColor
 	TextLabel.TextSize = 14
 	TextLabel.TextWrapped = false
 	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 	TextLabel.TextYAlignment = Enum.TextYAlignment.Center
-	local Button = Instance.new("ImageButton", HeaderFrame)
-	Button.Name = "Button"
-	Button.AutoButtonColor = false
-	Button.BackgroundColor3 = Color3.new()
-	Button.BackgroundTransparency = 1
-	Button.BorderColor3 = Color3.new()
-	Button.BorderSizePixel = 0
-	Button.Position = UDim2.new(1, -30, 0, 10)
-	Button.Size = UDim2.new(0, 20, 0, 20)
-	Button.ZIndex = 4
-	Button.Image = "rbxassetid://7743878857"
-	Button.ImageColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HeaderTextColor
-	Button.ImageTransparency = 0.65
-	Button.MouseEnter:Connect(function()
-		TweenService:Create(Button, TweenInfo.new(0.2), {ImageTransparency = 0}):Play()
+	local ConcealButton = Instance.new("ImageButton", HeaderFrame)
+	ConcealButton.Name = "Conceal"
+	ConcealButton.AutoButtonColor = false
+	ConcealButton.BackgroundColor3 = Color3.new()
+	ConcealButton.BackgroundTransparency = 1
+	ConcealButton.BorderColor3 = Color3.new()
+	ConcealButton.BorderSizePixel = 0
+	ConcealButton.Position = UDim2.new(1, -30, 0, 10)
+	ConcealButton.Size = UDim2.new(0, 20, 0, 20)
+	ConcealButton.ZIndex = 10
+	ConcealButton.Image = "rbxassetid://7743878857"
+	ConcealButton.ImageColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderTextColor
+	ConcealButton.ImageTransparency = 0.65
+	ConcealButton.MouseEnter:Connect(function()
+		TweenService:Create(ConcealButton, TweenInfo.new(0.2), {ImageTransparency = 0}):Play()
 	end)
-	Button.MouseLeave:Connect(function()
-		TweenService:Create(Button, TweenInfo.new(0.2), {ImageTransparency = 0.4}):Play()
+	ConcealButton.MouseLeave:Connect(function()
+		TweenService:Create(ConcealButton, TweenInfo.new(0.2), {ImageTransparency = 0.65}):Play()
 	end)
-	Button.MouseButton1Click:Connect(function()
-		--
+	ConcealButton.MouseButton1Click:Connect(function()
+		Midnight.Hidden = not Midnight.Hidden
+		WindowFrame.Visible = Midnight.Hidden
+	end)
+	local ShrinkButton = Instance.new("ImageButton", HeaderFrame)
+	ShrinkButton.Name = "Shrink"
+	ShrinkButton.AutoButtonColor = false
+	ShrinkButton.BackgroundColor3 = Color3.new()
+	ShrinkButton.BackgroundTransparency = 1
+	ShrinkButton.BorderColor3 = Color3.new()
+	ShrinkButton.BorderSizePixel = 0
+	ShrinkButton.Position = UDim2.new(1, -60, 0, 10)
+	ShrinkButton.Size = UDim2.new(0, 20, 0, 20)
+	ShrinkButton.ZIndex = 10
+	ShrinkButton.Image = "rbxassetid://7733997870"
+	ShrinkButton.ImageColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderTextColor
+	ShrinkButton.ImageTransparency = 0.65
+	ShrinkButton.MouseEnter:Connect(function()
+		TweenService:Create(ShrinkButton, TweenInfo.new(0.2), {ImageTransparency = 0}):Play()
+	end)
+	ShrinkButton.MouseLeave:Connect(function()
+		TweenService:Create(ShrinkButton, TweenInfo.new(0.2), {ImageTransparency = 0.65}):Play()
+	end)
+	ShrinkButton.MouseButton1Click:Connect(function()
+		Midnight.Shrink = not Midnight.Shrink
+		if Midnight.Shrink then
+			ShrinkButton.Image = "rbxassetid://7733992901"
+			TweenService:Create(ShadowImage, TweenInfo.new(0.2), {ImageTransparency = 1}):Play()
+			delay(0.2, function()
+				WindowFrame.ClipsDescendants = true
+			end)
+			TweenService:Create(WindowFrame, TweenInfo.new(0.4), {Size = UDim2.new(0, 500, 0, 40)}):Play()
+		else
+			ShrinkButton.Image = "rbxassetid://7733997870"
+			TweenService:Create(WindowFrame, TweenInfo.new(0.4), {Size = UDim2.new(0, 500, 0, 480)}):Play()
+			delay(0.2, function()
+				WindowFrame.ClipsDescendants = false
+				TweenService:Create(ShadowImage, TweenInfo.new(0.2), {ImageTransparency = 0.2}):Play()
+			end)
+		end
 	end)
 	local BrowserFrame = Instance.new("Frame", WindowFrame)
 	BrowserFrame.Name = "Browser"
-	BrowserFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].BrowserColor
+	BrowserFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].BrowserColor
 	BrowserFrame.BackgroundTransparency = 0
 	BrowserFrame.BorderColor3 = Color3.new()
 	BrowserFrame.BorderSizePixel = 0
@@ -265,6 +304,81 @@ function Z8m2fOpQ:Window(Settings)
 	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	Layout.SortOrder = Enum.SortOrder.LayoutOrder
 	Layout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+	if Settings.LoadingInterface and Settings.LoadingInterface.Enabled then
+		WindowFrame.BackgroundTransparency = 1
+		WindowFrame.Size = UDim2.new(0, 500, 0, 180)
+		BrowserFrame.Visible = false
+		Container.Visible = false
+		HeaderFrame.Visible = false
+		ShadowImage.ImageTransparency = 1
+
+		local LoadingFrame = Instance.new("Frame", WindowFrame)
+		LoadingFrame.Name = "Loading"
+		LoadingFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].WindowColor
+		LoadingFrame.BackgroundTransparency = 1
+		TweenService:Create(LoadingFrame, TweenInfo.new(1), {BackgroundTransparency = 0}):Play()
+		delay(3, function()
+			TweenService:Create(LoadingFrame, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
+		end)
+		LoadingFrame.BorderColor3 = Color3.new()
+		LoadingFrame.BorderSizePixel = 0
+		LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+		LoadingFrame.ZIndex = 12
+		local Corner = Instance.new("UICorner", LoadingFrame)
+		Corner.Name = "Corner"
+		Corner.CornerRadius = UDim.new(0, 10)
+		local TextLabel = Instance.new("TextLabel", LoadingFrame)
+		TextLabel.Name = "Headline"
+		TextLabel.BackgroundColor3 = Color3.new()
+		TextLabel.BackgroundTransparency = 1
+		TextLabel.BorderColor3 = Color3.new()
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Position = UDim2.new(0, 20, 0, 20)
+		TextLabel.Size = UDim2.new(1, -40, 0, 18)
+		TextLabel.ZIndex = 14
+		TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+		TextLabel.Text = Settings.LoadingInterface.Title or "Midnight Window Example"
+		TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
+		TextLabel.TextSize = 18
+		TextLabel.TextTransparency = 1
+		TweenService:Create(TextLabel, TweenInfo.new(1), {TextTransparency = 0}):Play()
+		delay(3, function()
+			TweenService:Create(TextLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
+		end)
+		TextLabel.TextWrapped = false
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TextLabel.TextYAlignment = Enum.TextYAlignment.Center
+		local TextLabel = Instance.new("TextLabel", LoadingFrame)
+		TextLabel.Name = "Subtitle"
+		TextLabel.BackgroundColor3 = Color3.new()
+		TextLabel.BackgroundTransparency = 1
+		TextLabel.BorderColor3 = Color3.new()
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Position = UDim2.new(0, 20, 0, 42)
+		TextLabel.Size = UDim2.new(1, -40, 0, 14)
+		TextLabel.ZIndex = 14
+		TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+		TextLabel.Text = Settings.LoadingInterface.Subtitle or "nil"
+		TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
+		TextLabel.TextSize = 14
+		TextLabel.TextTransparency = 1
+		TweenService:Create(TextLabel, TweenInfo.new(1), {TextTransparency = 0.4}):Play()
+		delay(3, function()
+			TweenService:Create(TextLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
+		end)
+		TextLabel.TextWrapped = false
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TextLabel.TextYAlignment = Enum.TextYAlignment.Center
+		wait(3)
+		TweenService:Create(WindowFrame, TweenInfo.new(1), {Size = UDim2.new(0, 500, 0, 480)}):Play()
+		WindowFrame.BackgroundTransparency = 0
+		BrowserFrame.Visible = true
+		Container.Visible = true
+		HeaderFrame.Visible = true
+		ShadowImage.ImageTransparency = 0.4
+	end
+
 	local Window = {}
 	function Window:Page(TabOption)
 		local TabButton = Instance.new("ImageButton", BrowserFrame)
@@ -290,7 +404,7 @@ function Z8m2fOpQ:Window(Settings)
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 		ImageLabel.ZIndex = 4
 		ImageLabel.Image = TabOption.Image or ""
-		ImageLabel.ImageColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+		ImageLabel.ImageColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 		ImageLabel.ImageTransparency = 0.65
 		if ImageLabel.Image == "" then
 			ImageLabel.Visible = false
@@ -305,9 +419,9 @@ function Z8m2fOpQ:Window(Settings)
 		if ImageLabel.Visible == true then TextLabel.Position = UDim2.new(0, 30, 0, 0) end
 		TextLabel.Size = UDim2.new(0, 0, 0, 20)
 		TextLabel.ZIndex = 4
-		TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+		TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 		TextLabel.Text = TabOption.Name or "None"
-		TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+		TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 		TextLabel.TextSize = 14
 		TextLabel.TextTransparency = 0.65
 		TextLabel.TextWrapped = false
@@ -324,9 +438,9 @@ function Z8m2fOpQ:Window(Settings)
 		TabButton.MouseButton1Click:Connect(function()
 			--
 		end)
-		if (#BrowserFrame:GetChildren() -2) == 1 then
-			TweenService:Create(TextLabel, TweenInfo.new(.4), {TextTransparency = 0}):Play()
-			TweenService:Create(ImageLabel, TweenInfo.new(.4), {ImageTransparency = 0}):Play()
+		if (#BrowserFrame:GetChildren() -2) == 1 and TabOption.Settings ~= "Z8m2fOpQ" then
+			TweenService:Create(TextLabel, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+			TweenService:Create(ImageLabel, TweenInfo.new(0.4), {ImageTransparency = 0}):Play()
 		end
 
 		local TabFrame = Instance.new("ScrollingFrame", Container)
@@ -346,12 +460,13 @@ function Z8m2fOpQ:Window(Settings)
 		TabButton.MouseButton1Click:Connect(function()
 			for _, Object in pairs(BrowserFrame:GetChildren()) do
 				if Object:IsA("ImageButton") and Object ~= TabButton then
-					TweenService:Create(Object:FindFirstChildOfClass("TextLabel"), TweenInfo.new(.4), {TextTransparency = 0.65}):Play()
-					TweenService:Create(Object:FindFirstChildOfClass("ImageLabel"), TweenInfo.new(.4), {ImageTransparency = 0.65}):Play()
+					TweenService:Create(Object:FindFirstChildOfClass("TextLabel"), TweenInfo.new(0.4), {TextTransparency = 0.65}):Play()
+					TweenService:Create(Object:FindFirstChildOfClass("ImageLabel"), TweenInfo.new(0.4), {ImageTransparency = 0.65}):Play()
 				end
 			end
-			TweenService:Create(TextLabel, TweenInfo.new(.4), {TextTransparency = 0}):Play()
-			TweenService:Create(ImageLabel, TweenInfo.new(.4), {ImageTransparency = 0}):Play()
+			TweenService:Create(HeaderFrame:FindFirstChild("Settings"), TweenInfo.new(0.4), {ImageTransparency = 0.65}):Play()
+			TweenService:Create(TextLabel, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+			TweenService:Create(ImageLabel, TweenInfo.new(0.4), {ImageTransparency = 0}):Play()
 			Layout:JumpTo(TabFrame)
 		end)
 		local Layout = Instance.new("UIListLayout", TabFrame)
@@ -361,13 +476,17 @@ function Z8m2fOpQ:Window(Settings)
 		Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		Layout.SortOrder = Enum.SortOrder.LayoutOrder
 		Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+		if TabOption.Settings == "Z8m2fOpQ" then
+			TabButton:Destroy(); TabFrame.LayoutOrder = 2147483647
+		end
+		--
 		local Tab = {}
 		function Tab:Section(SectionOption)
 			local SectionFrame = Instance.new("Frame", TabFrame)
 			SectionFrame.Name = SectionOption.Name or "None"
 			SectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 			SectionFrame.AutomaticSize = Enum.AutomaticSize.Y
-			SectionFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+			SectionFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 			SectionFrame.BackgroundTransparency = 0
 			SectionFrame.BorderColor3 = Color3.new()
 			SectionFrame.BorderSizePixel = 0
@@ -410,18 +529,19 @@ function Z8m2fOpQ:Window(Settings)
 			TextLabel.Position = UDim2.new(0, 10, 0, 10)
 			TextLabel.Size = UDim2.new(1, -20, 0, 20)
 			TextLabel.ZIndex = 4
-			TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+			TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 			TextLabel.Text = SectionOption.Name or "None"
-			TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+			TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 			TextLabel.TextSize = 14
 			TextLabel.TextWrapped = false
 			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 			TextLabel.TextYAlignment = Enum.TextYAlignment.Center
+			--
 			local Section = {}
 			function Section:Button(Arguments)
 				local ButtonFrame = Instance.new("Frame", Container)
 				ButtonFrame.Name = Arguments.Name or "None"
-				ButtonFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				ButtonFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				ButtonFrame.BackgroundTransparency = 0
 				ButtonFrame.BorderColor3 = Color3.new()
 				ButtonFrame.BorderSizePixel = 0
@@ -440,9 +560,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -20, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -461,12 +581,12 @@ function Z8m2fOpQ:Window(Settings)
 				ImageButton.ImageTransparency = 1
 				ImageButton.MouseEnter:Connect(function()
 					TweenService:Create(ButtonFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
 					TweenService:Create(ButtonFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
 				ImageButton.MouseButton1Click:Connect(function()
@@ -474,10 +594,10 @@ function Z8m2fOpQ:Window(Settings)
 					if not Success then
 						TweenService:Create(ButtonFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 						TextLabel.Text = "Error"
-						print("[Z8m2fOpQ]: "..tostring(Response))
+						print("[Midnight]: "..tostring(Response))
 						wait(0.5)
 						TextLabel.Text = Arguments.Name
-						TweenService:Create(ButtonFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+						TweenService:Create(ButtonFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 					else
 						SaveConfiguration()
 					end
@@ -487,7 +607,7 @@ function Z8m2fOpQ:Window(Settings)
 				if Arguments.Current == nil then Arguments.Current = false end
 				local ToggleFrame = Instance.new("Frame", Container)
 				ToggleFrame.Name = Arguments.Name or "None"
-				ToggleFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				ToggleFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				ToggleFrame.BackgroundTransparency = 0
 				ToggleFrame.BorderColor3 = Color3.new()
 				ToggleFrame.BorderSizePixel = 0
@@ -506,16 +626,16 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -20, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Center
 				local Switch = Instance.new("Frame", ToggleFrame)
 				Switch.Name = "Switch"
-				Switch.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Switch.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Switch.BackgroundTransparency = 0
 				Switch.BorderColor3 = Color3.new()
 				Switch.BorderSizePixel = 0
@@ -528,7 +648,7 @@ function Z8m2fOpQ:Window(Settings)
 				local Indicator = Instance.new("Frame", Switch)
 				Indicator.Name = "Indicator"
 				Indicator.AnchorPoint = Vector2.new(0, 0.5)
-				Indicator.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ToggleColor
+				Indicator.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ToggleColor
 				Indicator.BackgroundTransparency = 0
 				Indicator.BorderColor3 = Color3.new()
 				Indicator.BorderSizePixel = 0
@@ -555,12 +675,12 @@ function Z8m2fOpQ:Window(Settings)
 				ImageButton.ImageTransparency = 1
 				ImageButton.MouseEnter:Connect(function()
 					TweenService:Create(ToggleFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
 					TweenService:Create(ToggleFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
 				ImageButton.MouseButton1Click:Connect(function()
@@ -570,10 +690,10 @@ function Z8m2fOpQ:Window(Settings)
 					if not Success then
 						TweenService:Create(ToggleFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 						TextLabel.Text = "Error"
-						print("[Z8m2fOpQ]: "..tostring(Response))
+						print("[Midnight]: "..tostring(Response))
 						wait(0.5)
 						TextLabel.Text = Arguments.Name
-						TweenService:Create(ToggleFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+						TweenService:Create(ToggleFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 					else
 						Arguments.Current = not Arguments.Current
 						if Arguments.Current then
@@ -590,7 +710,7 @@ function Z8m2fOpQ:Window(Settings)
 							Arguments.Callback(Parameters)
 						end)
 						if not Success then
-							warn("[Z8m2fOpQ]: "..tostring(Response))
+							warn("[Midnight]: "..tostring(Response))
 						else
 							Arguments.Current = Parameters
 							if Arguments.Current then
@@ -604,7 +724,7 @@ function Z8m2fOpQ:Window(Settings)
 				end
 				if Settings.ConfigurationSaving then
 					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
-						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+						Midnight.Flags[Arguments.Flag] = Arguments
 					end
 				end
 				return Arguments
@@ -614,7 +734,7 @@ function Z8m2fOpQ:Window(Settings)
 				if Arguments.Current == nil then Arguments.Current = {} end
 				local DropdownFrame = Instance.new("Frame", Container)
 				DropdownFrame.Name = Arguments.Name or "None"
-				DropdownFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				DropdownFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				DropdownFrame.BackgroundTransparency = 0
 				DropdownFrame.BorderColor3 = Color3.new()
 				DropdownFrame.BorderSizePixel = 0
@@ -633,9 +753,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -20, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -650,7 +770,7 @@ function Z8m2fOpQ:Window(Settings)
 				ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 				ImageLabel.ZIndex = 6
 				ImageLabel.Image = "rbxassetid://7072706796"
-				ImageLabel.ImageColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				ImageLabel.ImageColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				ImageLabel.ImageTransparency = 0.4
 				local Container = Instance.new("ScrollingFrame", DropdownFrame)
 				Container.Name = "Container"
@@ -693,13 +813,13 @@ function Z8m2fOpQ:Window(Settings)
 				ImageButton.ImageColor3 = Color3.new()
 				ImageButton.ImageTransparency = 1
 				ImageButton.MouseEnter:Connect(function()
-					TweenService:Create(Button, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+					TweenService:Create(ImageButton, TweenInfo.new(0.2), {
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
-					TweenService:Create(Button, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+					TweenService:Create(ImageButton, TweenInfo.new(0.2), {
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
 				local Opened = false
@@ -720,7 +840,7 @@ function Z8m2fOpQ:Window(Settings)
 					for _, Option in pairs(Arguments.Options) do
 						local OptionFrame = Instance.new("Frame", Container)
 						OptionFrame.Name = Option
-						OptionFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+						OptionFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 						OptionFrame.BackgroundTransparency = 0
 						OptionFrame.BorderColor3 = Color3.new()
 						OptionFrame.BorderSizePixel = 0
@@ -739,9 +859,9 @@ function Z8m2fOpQ:Window(Settings)
 						TextLabel.Position = UDim2.new(0, 10, 0, 10)
 						TextLabel.Size = UDim2.new(1, -20, 0, 20)
 						TextLabel.ZIndex = 6
-						TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+						TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 						TextLabel.Text = Option
-						TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+						TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 						TextLabel.TextSize = 14
 						TextLabel.TextWrapped = true
 						TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -759,20 +879,20 @@ function Z8m2fOpQ:Window(Settings)
 						ImageButton.ImageColor3 = Color3.new()
 						ImageButton.ImageTransparency = 1
 						if table.find(Arguments.Current, Option) then
-							TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor}):Play()
+							TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor}):Play()
 						end
 						ImageButton.MouseButton1Click:Connect(function()
 							if table.find(Arguments.Current, Option) then
 								table.remove(Arguments.Current, table.find(Arguments.Current, Option))
-								TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor}):Play()
+								TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor}):Play()
 							else
 								if #Arguments.Current < Arguments.Maximum or (Arguments.Maximum == 1 and #Arguments.Current == 1) then
 									if Arguments.Maximum == 1 and #Arguments.Current == 1 then
-										TweenService:Create(Container:FindFirstChild(Arguments.Current[1]), TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor}):Play()
+										TweenService:Create(Container:FindFirstChild(Arguments.Current[1]), TweenInfo.new(0.4), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor}):Play()
 										table.remove(Arguments.Current, 1)
 									end
 									table.insert(Arguments.Current, Option)
-									TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor}):Play()
+									TweenService:Create(OptionFrame, TweenInfo.new(0.4), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor}):Play()
 								else
 									return
 								end
@@ -783,10 +903,10 @@ function Z8m2fOpQ:Window(Settings)
 							if not Success then
 								TweenService:Create(DropdownFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 								TextLabel.Text = "Error"
-								print("[Z8m2fOpQ]: "..tostring(Response))
+								print("[Midnight]: "..tostring(Response))
 								wait(0.5)
 								TextLabel.Text = Option
-								TweenService:Create(DropdownFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+								TweenService:Create(DropdownFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 							end
 							SaveConfiguration()
 						end)
@@ -803,7 +923,7 @@ function Z8m2fOpQ:Window(Settings)
 				end
 				if Settings.ConfigurationSaving then
 					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
-						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+						Midnight.Flags[Arguments.Flag] = Arguments
 					end
 				end
 				return Arguments
@@ -813,7 +933,7 @@ function Z8m2fOpQ:Window(Settings)
 				Arguments.Type = "ColorPicker"
 				local PickerFrame = Instance.new("Frame", Container)
 				PickerFrame.Name = Arguments.Name or "None"
-				PickerFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				PickerFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				PickerFrame.BackgroundTransparency = 0
 				PickerFrame.BorderColor3 = Color3.new()
 				PickerFrame.BorderSizePixel = 0
@@ -832,9 +952,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -200, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -915,7 +1035,7 @@ function Z8m2fOpQ:Window(Settings)
 				Layout.VerticalAlignment = Enum.VerticalAlignment.Top
 				local Redness = Instance.new("Frame", ColorInput)
 				Redness.Name = "Redness"
-				Redness.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Redness.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Redness.BackgroundTransparency = 0
 				Redness.BorderColor3 = Color3.new()
 				Redness.BorderSizePixel = 0
@@ -936,18 +1056,18 @@ function Z8m2fOpQ:Window(Settings)
 				Current.Position = UDim2.new(0.5, 0, 0.5, 0)
 				Current.Size = UDim2.new(1, -20, 0, 15)
 				Current.ZIndex = 12
-				Current.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
-				Current.PlaceholderColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].PlaceholderColor
+				Current.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+				Current.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
 				Current.PlaceholderText = "R"
 				Current.Text = ""
-				Current.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				Current.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				Current.TextSize = 12
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
 				Current.TextYAlignment = Enum.TextYAlignment.Center
 				local Greenness = Instance.new("Frame", ColorInput)
 				Greenness.Name = "Greenness"
-				Greenness.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Greenness.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Greenness.BackgroundTransparency = 0
 				Greenness.BorderColor3 = Color3.new()
 				Greenness.BorderSizePixel = 0
@@ -968,18 +1088,18 @@ function Z8m2fOpQ:Window(Settings)
 				Current.Position = UDim2.new(0.5, 0, 0.5, 0)
 				Current.Size = UDim2.new(1, -20, 0, 15)
 				Current.ZIndex = 12
-				Current.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
-				Current.PlaceholderColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].PlaceholderColor
+				Current.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+				Current.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
 				Current.PlaceholderText = "G"
 				Current.Text = ""
-				Current.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				Current.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				Current.TextSize = 12
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
 				Current.TextYAlignment = Enum.TextYAlignment.Center
 				local Blueness = Instance.new("Frame", ColorInput)
 				Blueness.Name = "Blueness"
-				Blueness.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Blueness.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Blueness.BackgroundTransparency = 0
 				Blueness.BorderColor3 = Color3.new()
 				Blueness.BorderSizePixel = 0
@@ -1000,11 +1120,11 @@ function Z8m2fOpQ:Window(Settings)
 				Current.Position = UDim2.new(0.5, 0, 0.5, 0)
 				Current.Size = UDim2.new(1, -20, 0, 15)
 				Current.ZIndex = 12
-				Current.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
-				Current.PlaceholderColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].PlaceholderColor
+				Current.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+				Current.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
 				Current.PlaceholderText = "B"
 				Current.Text = ""
-				Current.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				Current.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				Current.TextSize = 12
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
@@ -1012,7 +1132,7 @@ function Z8m2fOpQ:Window(Settings)
 
 				local HexInput = Instance.new("Frame", PickerFrame)
 				HexInput.Name = "Blueness"
-				HexInput.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				HexInput.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				HexInput.BackgroundTransparency = 0
 				HexInput.BorderColor3 = Color3.new()
 				HexInput.BorderSizePixel = 0
@@ -1034,11 +1154,11 @@ function Z8m2fOpQ:Window(Settings)
 				Current.Position = UDim2.new(0.5, 0, 0.5, 0)
 				Current.Size = UDim2.new(1, -20, 0, 15)
 				Current.ZIndex = 10
-				Current.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
-				Current.PlaceholderColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].PlaceholderColor
+				Current.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+				Current.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
 				Current.PlaceholderText = "#FFFFFF"
 				Current.Text = ""
-				Current.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				Current.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				Current.TextSize = 12
 				Current.TextWrapped = true
 				Current.TextXAlignment = Enum.TextXAlignment.Left
@@ -1112,12 +1232,12 @@ function Z8m2fOpQ:Window(Settings)
 				local Opened = false
 				ImageButton.MouseEnter:Connect(function()
 					TweenService:Create(PickerFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
 					TweenService:Create(PickerFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
 				ImageButton.MouseButton1Click:Connect(function()
@@ -1284,7 +1404,7 @@ function Z8m2fOpQ:Window(Settings)
 				end
 				if Settings.ConfigurationSaving then
 					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
-						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+						Midnight.Flags[Arguments.Flag] = Arguments
 					end
 				end
 				return Arguments
@@ -1296,7 +1416,7 @@ function Z8m2fOpQ:Window(Settings)
 				if Arguments.Current == nil then Arguments.Current = Arguments.Range[1] end
 				local SliderFrame = Instance.new("Frame", Container)
 				SliderFrame.Name = Arguments.Name or "None"
-				SliderFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				SliderFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				SliderFrame.BackgroundTransparency = 0
 				SliderFrame.BorderColor3 = Color3.new()
 				SliderFrame.BorderSizePixel = 0
@@ -1315,9 +1435,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -20, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1326,7 +1446,7 @@ function Z8m2fOpQ:Window(Settings)
 				Button.Name = "Slider"
 				Button.AnchorPoint = Vector2.new(0, 0.5)
 				Button.AutoButtonColor = false
-				Button.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Button.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Button.BackgroundTransparency = 0
 				Button.BorderColor3 = Color3.new()
 				Button.BorderSizePixel = 0
@@ -1338,7 +1458,7 @@ function Z8m2fOpQ:Window(Settings)
 				Corner.CornerRadius = UDim.new(1, 0)
 				local Indicator = Instance.new("Frame", Button)
 				Indicator.Name = "Switch"
-				Indicator.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SliderColor
+				Indicator.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SliderColor
 				Indicator.BackgroundTransparency = 0
 				Indicator.BorderColor3 = Color3.new()
 				Indicator.BorderSizePixel = 0
@@ -1379,10 +1499,10 @@ function Z8m2fOpQ:Window(Settings)
 								if not Success then
 									TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 									TextLabel.Text = "Error"
-									print("[Z8m2fOpQ]: "..tostring(Response))
+									print("[Midnight]: "..tostring(Response))
 									wait(0.5)
 									TextLabel.Text = Arguments.Name
-									TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+									TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 								end
 								Arguments.Current = NewValue
 								SaveConfiguration()
@@ -1405,16 +1525,16 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Name = "Name"
 				TextLabel.AnchorPoint = Vector2.new(1, 0.5)
 				TextLabel.AutomaticSize = Enum.AutomaticSize.X
-				TextLabel.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				TextLabel.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				TextLabel.BackgroundTransparency = 0
 				TextLabel.BorderColor3 = Color3.new()
 				TextLabel.BorderSizePixel = 0
 				TextLabel.Position = UDim2.new(0, -10, 0.5, 0)
 				TextLabel.Size = UDim2.new(0, 0, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = tostring(Arguments.Current) or "nil"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = false
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Right
@@ -1433,12 +1553,12 @@ function Z8m2fOpQ:Window(Settings)
 				ImageButton.ImageTransparency = 1
 				ImageButton.MouseEnter:Connect(function()
 					TweenService:Create(SliderFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
 					TweenService:Create(SliderFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
 				function Arguments:Set(Parameters)
@@ -1450,17 +1570,17 @@ function Z8m2fOpQ:Window(Settings)
 					if not Success then
 						TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 						SliderFrame:FindFirstChildOfClass("TextLabel").Text = "Error"
-						print("[Z8m2fOpQ]: "..tostring(Response))
+						print("[Midnight]: "..tostring(Response))
 						wait(0.5)
 						SliderFrame:FindFirstChildOfClass("TextLabel").Text = Arguments.Name
-						TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+						TweenService:Create(SliderFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 					end
 					Arguments.Current = Parameters
 					SaveConfiguration()
 				end
 				if Settings.ConfigurationSaving then
 					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
-						Z8m2fOpQ.Flags[Arguments.Flag] = Arguments
+						Midnight.Flags[Arguments.Flag] = Arguments
 					end
 				end
 				return Arguments
@@ -1468,7 +1588,7 @@ function Z8m2fOpQ:Window(Settings)
 			function Section:Input(Arguments)
 				local InputFrame = Instance.new("Frame", Container)
 				InputFrame.Name = Arguments.Name or "None"
-				InputFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+				InputFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 				InputFrame.BackgroundTransparency = 0
 				InputFrame.BorderColor3 = Color3.new()
 				InputFrame.BorderSizePixel = 0
@@ -1487,9 +1607,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.Position = UDim2.new(0, 10, 0, 10)
 				TextLabel.Size = UDim2.new(1, -20, 0, 20)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments.Name or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextWrapped = true
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1498,7 +1618,7 @@ function Z8m2fOpQ:Window(Settings)
 				Frame.Name = "Frame"
 				Frame.AnchorPoint = Vector2.new(1, 0)
 				Frame.AutomaticSize = Enum.AutomaticSize.X
-				Frame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].SectionColor
+				Frame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
 				Frame.BackgroundTransparency = 0
 				Frame.BorderColor3 = Color3.new()
 				Frame.BorderSizePixel = 0
@@ -1525,10 +1645,10 @@ function Z8m2fOpQ:Window(Settings)
 				TextBox.Size = UDim2.new(0, 0, 0, 10)
 				TextBox.ZIndex = 8
 				TextBox.Font = Enum.Font.GothamMedium
-				TextBox.PlaceholderColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].PlaceholderColor
+				TextBox.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
 				TextBox.PlaceholderText = Arguments.Placeholder or "None"
 				TextBox.Text = ""
-				TextBox.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextBox.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextBox.TextSize = 14
 				TextBox.TextXAlignment = Enum.TextXAlignment.Center
 				TextBox.TextYAlignment = Enum.TextYAlignment.Center
@@ -1539,10 +1659,10 @@ function Z8m2fOpQ:Window(Settings)
 					if not Success then
 						TweenService:Create(InputFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
 						TextLabel.Text = "Error"
-						print("[Z8m2fOpQ]: "..tostring(Response))
+						print("[Midnight]: "..tostring(Response))
 						wait(0.5)
 						TextLabel.Text = Arguments.Name
-						TweenService:Create(InputFrame, TweenInfo.new(0.6), {BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor}):Play()
+						TweenService:Create(InputFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
 					end
 					if Arguments.ClearOnFocusLost then
 						TextBox.Text = ""
@@ -1562,21 +1682,180 @@ function Z8m2fOpQ:Window(Settings)
 				ImageButton.ImageTransparency = 1
 				ImageButton.MouseEnter:Connect(function()
 					TweenService:Create(InputFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].HoverElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
 					}):Play()
 				end)
 				ImageButton.MouseLeave:Connect(function()
 					TweenService:Create(InputFrame, TweenInfo.new(0.2), {
-						BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].ElementColor
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
 					}):Play()
 				end)
+				return Arguments
+			end
+			function Section:Keybind(Arguments)
+				local KeybindFrame = Instance.new("Frame", Container)
+				KeybindFrame.Name = Arguments.Name or "None"
+				KeybindFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
+				KeybindFrame.BackgroundTransparency = 0
+				KeybindFrame.BorderColor3 = Color3.new()
+				KeybindFrame.BorderSizePixel = 0
+				KeybindFrame.Size = UDim2.new(1, 0, 0, 40)
+				KeybindFrame.ZIndex = 4
+				KeybindFrame.ClipsDescendants = true
+				local Corner = Instance.new("UICorner", KeybindFrame)
+				Corner.Name = "Corner"
+				Corner.CornerRadius = UDim.new(0, 5)
+				local TextLabel = Instance.new("TextLabel", KeybindFrame)
+				TextLabel.Name = "Name"
+				TextLabel.BackgroundColor3 = Color3.new()
+				TextLabel.BackgroundTransparency = 1
+				TextLabel.BorderColor3 = Color3.new()
+				TextLabel.BorderSizePixel = 0
+				TextLabel.Position = UDim2.new(0, 10, 0, 10)
+				TextLabel.Size = UDim2.new(1, -20, 0, 20)
+				TextLabel.ZIndex = 6
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
+				TextLabel.Text = Arguments.Name or "None"
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
+				TextLabel.TextSize = 14
+				TextLabel.TextWrapped = true
+				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+				TextLabel.TextYAlignment = Enum.TextYAlignment.Center
+				local Frame = Instance.new("Frame", KeybindFrame)
+				Frame.Name = "Frame"
+				Frame.AnchorPoint = Vector2.new(1, 0)
+				Frame.AutomaticSize = Enum.AutomaticSize.X
+				Frame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].SectionColor
+				Frame.BackgroundTransparency = 0
+				Frame.BorderColor3 = Color3.new()
+				Frame.BorderSizePixel = 0
+				Frame.Position = UDim2.new(1, -5, 0, 5)
+				Frame.Size = UDim2.new(0, 0, 0, 30)
+				Frame.ZIndex = 8
+				local Corner = Instance.new("UICorner", Frame)
+				Corner.Name = "Corner"
+				Corner.CornerRadius = UDim.new(0, 5)
+				local Padding = Instance.new("UIPadding", Frame)
+				Padding.Name = "Padding"
+				Padding.PaddingBottom = UDim.new(0, 10)
+				Padding.PaddingLeft = UDim.new(0, 10)
+				Padding.PaddingRight = UDim.new(0, 10)
+				Padding.PaddingTop = UDim.new(0, 10)
+				local TextBox = Instance.new("TextBox", Frame)
+				TextBox.Name = "Input"
+				TextBox.AutomaticSize = Enum.AutomaticSize.X
+				TextBox.BackgroundColor3 = Color3.new()
+				TextBox.BackgroundTransparency = 1
+				TextBox.BorderColor3 = Color3.new()
+				TextBox.BorderSizePixel = 0
+				TextBox.ClearTextOnFocus = false
+				TextBox.Size = UDim2.new(0, 0, 0, 10)
+				TextBox.ZIndex = 8
+				TextBox.Font = Enum.Font.GothamMedium
+				TextBox.PlaceholderColor3 = Midnight.Theme[2][Midnight.Theme[1]].PlaceholderColor
+				TextBox.PlaceholderText = "nil"
+				TextBox.Text = Arguments.Current
+				TextBox.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
+				TextBox.TextSize = 14
+				TextBox.TextXAlignment = Enum.TextXAlignment.Center
+				TextBox.TextYAlignment = Enum.TextYAlignment.Center
+				local CheckingForKey = false
+				TextBox.Focused:Connect(function()
+					CheckingForKey = true
+					TextBox.Text = ""
+				end)
+				TextBox.FocusLost:Connect(function()
+					CheckingForKey = false
+					if TextBox.Text == nil or "" then
+						TextBox.Text = Arguments.Current
+						SaveConfiguration()
+					end
+				end)
+				game:GetService("UserInputService").InputBegan:Connect(function(Input, Typing)
+					if CheckingForKey then
+						if Input.KeyCode ~= Enum.KeyCode.Unknown --[[and Input.KeyCode ~= Enum.KeyCode.RightControl]] then
+							local SplitMessage = string.split(tostring(Input.KeyCode), ".")
+							local NewKeyNoEnum = SplitMessage[3]
+							TextBox.Text = tostring(NewKeyNoEnum)
+							Arguments.Current = tostring(NewKeyNoEnum)
+							TextBox:ReleaseFocus()
+							SaveConfiguration()
+						end
+					elseif Arguments.Current ~= nil and (Input.KeyCode == Enum.KeyCode[Arguments.Current] and not Typing) then
+						local Held = true
+						local Connection
+						Connection = Input.Changed:Connect(function(Property)
+							if Property == "UserInputState" then
+								Connection:Disconnect()
+								Held = false
+							end
+						end)
+
+						if not Arguments.HoldToInteract then
+							local Success, Response = pcall(Arguments.Callback)
+							if not Success then
+								TweenService:Create(KeybindFrame, TweenInfo.new(0.6), {BackgroundColor3 = Color3.fromRGB(135, 0, 0)}):Play()
+								TextLabel.Text = "Error"
+								print("[Midnight]: "..tostring(Response))
+								wait(0.5)
+								TextLabel.Text = Arguments.Name
+								TweenService:Create(KeybindFrame, TweenInfo.new(0.6), {BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor}):Play()
+							end
+						else
+							wait(0.25)
+							if Held then
+								local Loop; Loop = game:GetService("RunService").Stepped:Connect(function()
+									if not Held then
+										Arguments.Callback(false)
+										Loop:Disconnect()
+									else
+										Arguments.Callback(true)
+									end
+								end)	
+							end
+						end
+					end
+				end)
+				local ImageButton = Instance.new("ImageButton", KeybindFrame)
+				ImageButton.Name = "Surface"
+				ImageButton.AutoButtonColor = false
+				ImageButton.BackgroundColor3 = Color3.new()
+				ImageButton.BackgroundTransparency = 1
+				ImageButton.BorderColor3 = Color3.new()
+				ImageButton.BorderSizePixel = 0
+				ImageButton.Size = UDim2.new(1, 0, 1, 0)
+				ImageButton.ZIndex = 6
+				ImageButton.Image = ""
+				ImageButton.ImageColor3 = Color3.new()
+				ImageButton.ImageTransparency = 1
+				ImageButton.MouseEnter:Connect(function()
+					TweenService:Create(KeybindFrame, TweenInfo.new(0.2), {
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].HoverElementColor
+					}):Play()
+				end)
+				ImageButton.MouseLeave:Connect(function()
+					TweenService:Create(KeybindFrame, TweenInfo.new(0.2), {
+						BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].ElementColor
+					}):Play()
+				end)
+				if Settings.ConfigurationSaving then
+					if Settings.ConfigurationSaving.Enabled and Arguments.Flag then
+						Midnight.Flags[Arguments.Flag] = Arguments
+					end
+				end
+				function Arguments:Set(Parameters)
+					TextBox.Text = tostring(Parameters)
+					Arguments.Current = tostring(Parameters)
+					TextBox:ReleaseFocus()
+					SaveConfiguration()
+				end
 				return Arguments
 			end
 			function Section:Label(Arguments)
 				local ButtonFrame = Instance.new("Frame", Container)
 				ButtonFrame.Name = Arguments or "None"
 				ButtonFrame.AutomaticSize = Enum.AutomaticSize.Y
-				ButtonFrame.BackgroundColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].DepthColor
+				ButtonFrame.BackgroundColor3 = Midnight.Theme[2][Midnight.Theme[1]].DepthColor
 				ButtonFrame.BackgroundTransparency = 0
 				ButtonFrame.BorderColor3 = Color3.new()
 				ButtonFrame.BorderSizePixel = 0
@@ -1601,9 +1880,9 @@ function Z8m2fOpQ:Window(Settings)
 				TextLabel.BorderSizePixel = 0
 				TextLabel.Size = UDim2.new(1, 0, 0, 0)
 				TextLabel.ZIndex = 6
-				TextLabel.Font = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextFont
+				TextLabel.Font = Midnight.Theme[2][Midnight.Theme[1]].TextFont
 				TextLabel.Text = Arguments or "None"
-				TextLabel.TextColor3 = Z8m2fOpQ.Theme[2][Z8m2fOpQ.Theme[1]].TextColor
+				TextLabel.TextColor3 = Midnight.Theme[2][Midnight.Theme[1]].TextColor
 				TextLabel.TextSize = 14
 				TextLabel.TextTransparency = 0.4
 				TextLabel.TextWrapped = true
@@ -1616,19 +1895,68 @@ function Z8m2fOpQ:Window(Settings)
 			end
 			return Section
 		end
-		return Tab
+		if TabOption.Settings == "Z8m2fOpQ" then
+			return Tab, TabFrame
+		else
+			return Tab
+		end
 	end
+	--
+	local SettingsFunction, SettingsFrame = Window:Page({Name = "Settings", Settings = "Z8m2fOpQ"})
+	local DefaultCredits = SettingsFunction:Section({Name = "Credits"})
+	DefaultCredits:Label("Sosejikira#4993")
+	DefaultCredits:Keybind({
+		Name = "Toggle Window",
+		Current = Settings.ToggleBind or "RightShift",
+		HoldToInteract = false,
+		Callback = function(Input)
+			Midnight.Hidden = not Midnight.Hidden
+			WindowFrame.Visible = Midnight.Hidden
+		end,
+	})
+	--
+	local SettingsButton = Instance.new("ImageButton", HeaderFrame)
+	SettingsButton.Name = "Settings"
+	SettingsButton.AutoButtonColor = false
+	SettingsButton.BackgroundColor3 = Color3.new()
+	SettingsButton.BackgroundTransparency = 1
+	SettingsButton.BorderColor3 = Color3.new()
+	SettingsButton.BorderSizePixel = 0
+	SettingsButton.Position = UDim2.new(1, -90, 0, 10)
+	SettingsButton.Size = UDim2.new(0, 20, 0, 20)
+	SettingsButton.ZIndex = 10
+	SettingsButton.Image = "rbxassetid://7734053495"
+	SettingsButton.ImageColor3 = Midnight.Theme[2][Midnight.Theme[1]].HeaderTextColor
+	SettingsButton.ImageTransparency = 0.65
+	SettingsButton.MouseEnter:Connect(function()
+		TweenService:Create(SettingsButton, TweenInfo.new(0.2), {ImageTransparency = 0}):Play()
+	end)
+	SettingsButton.MouseLeave:Connect(function()
+		if Layout.CurrentPage ~= SettingsFrame then
+			TweenService:Create(SettingsButton, TweenInfo.new(0.2), {ImageTransparency = 0.65}):Play()
+		end
+	end)
+	SettingsButton.MouseButton1Click:Connect(function()
+		TweenService:Create(SettingsButton, TweenInfo.new(0.4), {ImageTransparency = 0}):Play()
+		for _, Object in pairs(BrowserFrame:GetChildren()) do
+			if Object:IsA("ImageButton") then
+				TweenService:Create(Object:FindFirstChildOfClass("TextLabel"), TweenInfo.new(0.4), {TextTransparency = 0.65}):Play()
+				TweenService:Create(Object:FindFirstChildOfClass("ImageLabel"), TweenInfo.new(0.4), {ImageTransparency = 0.65}):Play()
+			end
+		end
+		Layout:JumpTo(SettingsFrame)
+	end)
 	return Window
 end
-function Z8m2fOpQ:LoadConfiguration()
+function Midnight:LoadConfiguration()
 	if CEnabled then
 		pcall(function()
-			if isfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension) then
-				LoadConfiguration(readfile(Z8m2fOpQ.Folder.Name.."/"..CFileName..Z8m2fOpQ.Folder.Extension))
-				--Z8m2fOpQ:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
+			if isfile(Midnight.Folder.Name.."/"..CFileName..Midnight.Folder.Extension) then
+				LoadConfiguration(readfile(Midnight.Folder.Name.."/"..CFileName..Midnight.Folder.Extension))
+				--Midnight:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
 			end
 		end)
 	end
 end
-task.delay(0.4, Z8m2fOpQ.LoadConfiguration, Z8m2fOpQ)
-return Z8m2fOpQ
+task.delay(0.4, Midnight.LoadConfiguration, Midnight)
+return Midnight
